@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from replit import db
 import random
 import os
 import json
@@ -120,8 +121,7 @@ async def checkwarn(ctx, member: discord.Member = None):
 @client.event
 async def on_member_join(ctx, *, member):
 	print(f'{member} has joined {ctx.guild.name}')
-	await member.send(
-	    f'Welcome to {ctx.guild.name}!! Hope you have a great time here')
+	await member.send(f'Welcome to {ctx.guild.name}!! Hope you have a great time here')
 
 
 @client.event
@@ -150,6 +150,58 @@ async def _8ball(ctx, *, question):
 	]
 	await ctx.send(f'question: {question}\nAnswer: {random.choice(responses)}')
 
+@client.command()
+
+async def tag(ctx,tag=None):
+
+  if tag == None:
+
+    await ctx.send(f'{ctx.author.name} dumbo atleast mention a tag -_-')
+
+  elif tag is not None:
+
+    value = db[tag]
+
+    await ctx.send(value)
+
+@client.command()
+async def createtag(ctx, tag=None,*,value):
+
+  if tag == None:
+
+    await ctx.send(f'{ctx.author.name} dumbo...... write a tag to create -_-')
+
+  elif tag is not None:
+
+    db[tag] = value
+
+    await ctx.send (f'tag has been succesfully made with name {tag}')
+
+@client.command()
+async def deletetag(ctx, tag=None):
+
+  if tag == None:
+
+    await ctx.send(f'{ctx.author.name} dumbo write the tag name to be deleted -_-')
+
+  elif tag is not None:
+
+    del db[tag]
+
+    await ctx.send (f'tag {tag} has been deleted succesfully! ')
+
+@client.command()
+async def whois(ctx, member : discord.Member):
+
+  embed = discord.Embed(title = member.name, discription =member.mention, colour = discord.Colour.orange())
+
+  embed.add_field(name = 'ID' , value = member.id , inline = True)
+
+  embed.set_thumbnail(url = member.avatar_url)
+
+  embed.set_footer(icon_url = ctx.author.avatar_url , text = f'requested by {ctx.author.name}')
+
+  await ctx.send(embed = embed)
 
 @client.command(aliases=['k'])
 @commands.has_permissions(kick_members=True)
@@ -363,4 +415,4 @@ async def get_bank_data():
 
 
 keep_alive()
-client.run(os.getenv('Token'))
+client.run('your token') # place your own bot token
