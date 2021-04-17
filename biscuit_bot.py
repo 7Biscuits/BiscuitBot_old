@@ -1,11 +1,12 @@
-import discord
+import discord #pip install discord.py
 from discord.ext import commands
-from replit import db
+from replit import db #pip install replit
 import random
 import os
 import json
 import requests
-import aiofiles
+import aiofiles # pip install aiofiles
+import asyncio # pip install asyncio
 from keep_alive import keep_alive
 
 os.getcwd()
@@ -131,12 +132,12 @@ async def on_member_remove(ctx, *, member):
 
 @client.command()
 async def ping(ctx):
-	await ctx.send(f'pong! {round(client.latency * 1000)}ms')
+	await ctx.send(f'***pong!*** {round(client.latency * 1000)}ms')
 
 
 @client.command()
 async def pong(ctx):
-	await ctx.send(f'ping! {round(client.latency * 1000)}ms')
+	await ctx.send(f'***ping!*** {round(client.latency * 1000)}ms')
 
 
 @client.command(aliases=['8ball'])
@@ -148,7 +149,7 @@ async def _8ball(ctx, *, question):
 	    'Signs point to yes Neutral Answers.', 'nope.', 'no.', 'never.',
 	    'maybe.', 'probably.', 'probably not.', 'could be.'
 	]
-	await ctx.send(f'question: {question}\nAnswer: {random.choice(responses)}')
+	await ctx.send(f'```question: {question}\nAnswer: {random.choice(responses)}```')
 
 @client.command()
 
@@ -251,7 +252,7 @@ async def unban(ctx, *, member: discord.Member):
 async def op(ctx, *, member: discord.Member = None):
 	if member == None:
 		member = ctx.author
-		await ctx.send(f'I do not lie but {ctx.author.mention} is the awesome')
+		await ctx.send(f'I do not lie but {ctx.author.mention} is awesome')
 		return
 	await ctx.send(f'I do not lie but {member.mention} is awesome :)')
 
@@ -357,7 +358,7 @@ async def on_message_delete(message):
 	del snipe_message_content[message.channel.id]
 
 
-@client.command(name='snipe')
+"""@client.command(name='snipe')
 async def snipe(ctx):
 	channel = ctx.channel
 	try:
@@ -370,8 +371,38 @@ async def snipe(ctx):
 	except:  #This piece of code is run if the bot doesn't find anything in the dictionary
 		await ctx.send(
 		    f"There are no recently deleted messages in #{channel.name}")
-		await client.process_commands(message)
+		await client.process_commands(message)"""
 
+@client.event
+async def on_message_delete(message):
+  snipe_message_author[message.channel.id] = message.author
+  snipe_message_content[message.channel.id] = message.content
+  await asyncio.sleep(60)
+  del snipe_message_author[message.channel.id]
+  del snipe_message_content[message.channel.id]
+
+@client.command()
+async def bonk(ctx, *, member: discord.Member = None):
+  if member == None:
+    await ctx.send("Mention the member You want to bonk -_-")
+  else:
+    await ctx.send(f'{ctx.author.mention} **BONKED** {member.mention}')
+
+
+@client.command()
+async def snipe(ctx):
+    channel = ctx.channel
+    try:
+      em = discord.Embed(title=f"Sniped message #{channel.name}",
+                           description=snipe_message_content[channel.id],
+                           color=ctx.author.color)
+      em.set_footer(text=f"Message sniped by {ctx.author.name}")
+      await ctx.send(embed=em)
+      del snipe_message_content[channel.id]
+      del snipe_message_author[channel.id]
+
+    except:
+      await ctx.send(f"**There is nothing to snipe!**")
 
 """@client.command(pass_context=True)
 async def help(ctx):
@@ -411,8 +442,8 @@ async def get_bank_data():
 	with open('mainbank.json', 'r') as f:
 		user = json.load(f)
 
-	return users
+	return #users
 
 
 keep_alive()
-client.run('your token') # place your own bot token
+client.run('your-token-here') # put your bot token here
