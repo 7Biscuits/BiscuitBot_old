@@ -1,3 +1,9 @@
+'''
+outdated
+'''
+######################
+######################
+
 A discord bot(prefix = "b!")
 #Help command:
 help
